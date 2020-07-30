@@ -26,8 +26,11 @@ int main(int argc, char **argv) {
     }while(fFind);
     array[i] = r;
   }
+
+  printf("--BEFORE--\n");
   printarray(&array[0], ARRAY_NUM);
   sort(array, ARRAY_NUM);
+  printf("--AFTER--\n");
   printarray(&array[0], ARRAY_NUM);
   return 0;
 }
