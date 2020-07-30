@@ -27,10 +27,10 @@ int main(int argc, char **argv) {
     array[i] = r;
   }
 
-  printf("--BEFORE--\n");
+  printf("--Before--\n");
   printarray(&array[0], ARRAY_NUM);
   sort(array, ARRAY_NUM);
-  printf("--AFTER--\n");
+  printf("--After--\n");
   printarray(&array[0], ARRAY_NUM);
   return 0;
 }
