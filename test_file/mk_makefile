@@ -1,0 +1,58 @@
+#!/bin/bash
+
+#mk_makefile [target_name]
+
+if [ -e ./Makefile  ];then
+    rm -f Makefile
+fi
+
+editfile=Makefile
+
+touch $editfile
+
+echo "CC = gcc" >> $editfile
+echo "CFLAGS = -Wall -O0 -g" >> $editfile
+echo "INCLUDE = -I/usr/local/include" >> $editfile
+echo "LDFLAGS = -L/usr/local/lib" >> $editfile
+echo "LIBS = -lm" >> $editfile
+
+# オブジェクトファイルの記載
+filelist=`find ./ -type f -name "*.c"`
+objfiles=${filelist//.c/.o\\}
+objfiles=${objfiles%\\}
+#echo $objfiles
+echo "OBJS = \\" >> $editfile
+echo "	$objfiles" >> $editfile
+
+if [ $# -lt 1 ]; then
+    echo "PROGRAM = a.out" >> $editfile
+else
+    echo "PROGRAM = $1" >> $editfile
+fi
+
+echo "" >> $editfile
+
+echo 'all: depend $(PROGRAM)' >> $editfile
+echo "" >> $editfile
+
+echo '$(PROGRAM) : $(OBJS)' >> $editfile
+echo '	$(CC) -o $@ $(LIBS) $(LDFLAGS) $^' >> $editfile
+echo "" >> $editfile
+
+echo 'obj/%.o : %.c' >> $editfile
+echo '	$(CC) -c $(CFLAGS) $<' >> $editfile
+echo "" >> $editfile
+
+echo '.PHONY : clean' >> $editfile
+echo 'clean :' >> $editfile
+echo '	$(RM) $(PROGRAM) $(OBJS) depend.inc' >> $editfile
+echo "" >> $editfile
+
+echo '.PHONY : depend' >> $editfile
+echo 'depend : $(OBJS:.o=.c)' >> $editfile
+echo '	-@ $(RM) depend.inc' >> $editfile
+echo '	-@ for i in $^; do\' >> $editfile
+echo '		cpp -MM $$i | sed "s/\[_a-zA-Z0-9][_a-zA-Z0-9]*\.c//g" >> depend.inc;\' >> $editfile
+echo '	done' >> $editfile
+
+echo '-include depend.inc' >> $editfile
